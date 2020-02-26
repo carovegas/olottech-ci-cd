@@ -1,2 +1,2 @@
 # olottech-ci-cd
-Demo project for the OlotTech CI/CD talk
+Demo project for the OlotTech Continuous Integration/Continuous Delivery talk

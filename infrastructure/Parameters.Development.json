@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "subscriptionId": {
+            "value": "3591b539-705f-4250-8d6c-f0cc3cd8693a"
+        },
+        "name": {
+            "value": "dvlm-olottech-cicd-webapp"
+        },
+        "location": {
+            "value": "West Europe"
+        },
+        "hostingEnvironment": {
+            "value": ""
+        },
+        "hostingPlanName": {
+            "value": "olottech-cicd-plan"
+        },
+        "serverFarmResourceGroup": {
+            "value": "OLOTTECH-CICD-PLAN-RG"
+        },
+        "alwaysOn": {
+            "value": false
+        },
+        "linuxFxVersion": {
+            "value": "DOTNETCORE|3.1"
+        }
+    }
+}

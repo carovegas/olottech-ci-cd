@@ -1,0 +1,401 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "websiteName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "planName": {
+      "type": "string"
+    },
+    "planResourceGroup": {
+      "type": "string"
+    },
+    "hostingEnvironmentProfile": {
+      "type": "string",
+      "defaultValue": ""
+    },
+    "vnetIntegration": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "exampleValue": {
+          "vnetResourceGroup": "my-resource-group",
+          "vnetName": "my-vnet",
+          "subnetName": "my-subnet"
+        }
+      }
+    },
+    "customHostnameBindings": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "exampleValue": [
+          "customdomain1.azurewebsites.net",
+          "customdomain2.azurewebsites.net"
+        ]
+      }
+    },
+    "keyVaultResourceGroup": {
+      "type": "string"
+    },
+    "keyVaultId": {
+      "type": "string"
+    },
+    "customHostnameBindingsWithCertificate": {
+      "type": "array",
+      "defaultValue": [],
+      "metadata": {
+        "exampleValue": [
+          { 
+            "domain" : "customdomainwithcertificate.azurewebsites.net",
+            "keyVaultSecretName": "SundioApiPrivateCertificate"
+          }
+        ]
+      }
+    },
+    "customApplicationSettings": {
+      "type": "array",
+      "defaultValue": []
+    },
+    "clientAffinityEnabled": {
+      "type": "bool",
+      "defaultValue": true
+    },
+    "httpLogsSasUrl": {
+      "type": "securestring"
+    },
+    "signingCertificate":{
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Object containing the key vault name of the certificates used to sign in tokens and the setting in which the thumbprint should be added.",
+        "exampleValue": {
+            "keyVaultCertificateName": "TokenSigningCertificate",
+            "webAppThumbprintSettingName": "SigningCertificateThumpbrint"
+        }
+      }
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {},
+      "metadata": {
+        "description": "Object containing the tags that will be added to the webapp and slot",
+        "exampleValue": {
+            "key": "value",
+            "key2": "value2"
+        }
+      }
+    },
+	"isDotNetCore": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "alwaysOn": {
+      "type": "bool",
+      "defaultValue": false
+    }
+  },
+  "functions": [
+    {
+      "namespace": "SunwebGroup",
+      "members": {
+        "buildAppSetting" : {
+          "parameters": [
+            {
+              "name": "settingName",
+              "type": "string"
+            },
+            {
+              "name": "settingValue",
+              "type": "string"
+            }
+          ],
+          "output": {
+            "type": "object",
+            "value": "[json(concat('{\"name\": \"', parameters('settingName'), '\", \"value\": \"', parameters('settingValue'), '\"}'))]"
+          }
+        }
+      }
+    }
+  ],
+  "variables": {
+    "enableVnetIntegration": "[and(empty(parameters('hostingEnvironmentProfile')), not(empty(parameters('vnetIntegration'))))]",
+    "subnetResourceId": "[if(variables('enableVnetIntegration'), resourceId(parameters('vnetIntegration')['vnetResourceGroup'], 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetIntegration')['vnetName'], parameters('vnetIntegration')['subnetName']), json('null'))]",
+    "sharedApplicationSettings": [
+      {
+        "name": "NEWRELIC_LICENSEKEY", 
+        "value": "e19970f75ff57c749c60a80ac387c6c8897ae46e"
+      },
+      {
+        "name": "WEBSITE_NODE_DEFAULT_VERSION", 
+        "value": "4.2.3"
+      },
+      {
+        "name": "COR_ENABLE_PROFILING", 
+        "value": "1"
+      },
+      {
+        "name": "NEWRELIC_HOME", 
+        "value": "D:\\Home\\site\\wwwroot\\newrelic"
+      },
+      {
+        "name": "COR_PROFILER", 
+        "value": "{71DA0A04-7777-4EC6-9643-7D28B46A8A41}"
+      },
+      {
+        "name": "COR_PROFILER_PATH", 
+        "value": "D:\\Home\\site\\wwwroot\\newrelic\\NewRelic.Profiler.dll"
+      },
+      {
+        "name": "WEBSITE_OVERRIDE_PRESERVE_DEFAULT_STICKY_SLOT_SETTINGS", 
+        "value": "0"
+      },
+      {
+        "name": "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG",
+        "value": "1"
+      }
+    ],
+	"sharedApplicationSettingsForDotNetCore": [
+      {
+        "name": "NEW_RELIC_LICENSE_KEY", 
+        "value": "e19970f75ff57c749c60a80ac387c6c8897ae46e"
+      },
+      {
+        "name": "CORECLR_ENABLE_PROFILING", 
+        "value": "1"
+      },
+      {
+        "name": "CORECLR_NEWRELIC_HOME", 
+        "value": "D:\\Home\\site\\wwwroot\\newrelic"
+      },
+      {
+        "name": "CORECLR_PROFILER", 
+        "value": "{36032161-FFC0-4B61-B559-F6C5D41BAE5A}"
+      },
+      {
+        "name": "CORECLR_PROFILER_PATH", 
+        "value": "D:\\Home\\site\\wwwroot\\newrelic\\NewRelic.Profiler.dll"
+      },
+	  {
+        "name": "CORECLR_PROFILER_PATH_32", 
+        "value": "D:\\Home\\site\\wwwroot\\newrelic\\x86\\NewRelic.Profiler.dll"
+      },
+	  {
+        "name": "CORECLR_PROFILER_PATH_64", 
+        "value": "D:\\Home\\site\\wwwroot\\newrelic\\NewRelic.Profiler.dll"
+      },
+      {
+        "name": "WEBSITE_OVERRIDE_PRESERVE_DEFAULT_STICKY_SLOT_SETTINGS", 
+        "value": "0"
+      },
+      {
+        "name": "WEBSITE_ADD_SITENAME_BINDINGS_IN_APPHOST_CONFIG",
+        "value": "1"
+      }
+    ],
+	"applicationSettings": "[if(parameters('isDotNetCore'),concat(variables('sharedApplicationSettingsForDotNetCore'),parameters('customApplicationSettings')),concat(variables('sharedApplicationSettings'),parameters('customApplicationSettings')))]",
+    "fakeHostnameBindings": [
+      "fakedomain.com"
+    ],
+    "fakeHostnameBindingsWithCertificate": [
+      { 
+        "domain": "fakedomainwithcertificate.com",
+        "keyVaultSecretName": "FakeCertificateSecretName"
+      }
+    ],
+    "hostnameBindings": "[if(greater(length(parameters('customHostnameBindings')), 0),parameters('customHostnameBindings'),variables('fakeHostnameBindings'))]",
+    "numberOfHostnameBindings": "[length(parameters('customHostnameBindings'))]",
+    "hostnameBindingsWithCertificate": "[if(greater(length(parameters('customHostnameBindingsWithCertificate')), 0),parameters('customHostnameBindingsWithCertificate'),variables('fakeHostnameBindingsWithCertificate'))]",
+    "numberOfHostnameBindingsWithCertificate": "[length(parameters('customHostnameBindingsWithCertificate'))]",
+    "webAppSlotName": "Staging",
+    "keyVaultResourceId" : "[resourceId(parameters('keyVaultResourceGroup'), 'Microsoft.KeyVault/vaults', parameters('keyVaultId'))]",
+    "signingCertificateSuffix" : "-signingcertificate",
+    "signingCertificateDeploy" : "[concat(parameters('websiteName'),variables('signingCertificateSuffix'))]",
+    "certificateNameSuffix" : "[if(empty(parameters('hostingEnvironmentProfile')),'-outside-ase','')]"
+  },
+  "resources": [
+    {
+      "condition": "[greater(variables('numberOfHostnameBindingsWithCertificate'), 0)]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "name": "[concat(parameters('websiteName'),'-certificate-', copyIndex())]",
+      "copy": {
+        "name": "certificatescopy",
+        "count": "[length(variables('hostnameBindingsWithCertificate'))]",
+        "mode": "Serial"
+      },
+      "resourceGroup": "[parameters('planResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "parameters": { 
+          "certificateName": {
+            "value": "[concat(variables('hostnameBindingsWithCertificate')[copyIndex()].keyVaultSecretName,variables('certificateNameSuffix'))]"
+          },
+          "keyVaultId": {
+            "value": "[variables('keyVaultResourceId')]"
+          },
+          "keyVaultSecretName": {
+            "value": "[variables('hostnameBindingsWithCertificate')[copyIndex()].keyVaultSecretName]"
+          },
+          "serverFarmId": {
+            "value": "[resourceId(parameters('planResourceGroup'),'Microsoft.Web/serverFarms',parameters('planName'))]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "templateLink":{
+          "uri": "https://prodsundiocdelivery.blob.core.windows.net/armtemplates/WebCertificate.Template.json"
+        }
+      }
+    },
+    {
+      "apiVersion": "2016-08-01",
+      "name": "[parameters('websiteName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "name": "[parameters('websiteName')]",
+        "serverFarmId": "[resourceId(parameters('planResourceGroup'),'Microsoft.Web/serverFarms',parameters('planName'))]",
+        "hostingEnvironmentProfile": "[parameters('hostingEnvironmentProfile')]"
+      },
+      "resources": [
+        {
+          "type": "slots",
+          "name": "[variables('webAppSlotName')]",
+          "tags": "[parameters('tags')]",
+          "apiVersion": "2016-08-01",
+          "properties": {
+            "clientAffinityEnabled": "[parameters('clientAffinityEnabled')]",
+            "siteConfig": {
+              "phpVersion": "off",
+              "netFrameworkVersion": "v4.6",
+			        "use32BitWorkerProcess": "[parameters('isDotNetCore')]",
+              "webSocketsEnabled": false,
+              "alwaysOn": "[parameters('alwaysOn')]",
+              "httpLoggingEnabled": true,
+              "appSettings": "[union(variables('applicationSettings'), if(empty(parameters('signingCertificate')), json('[]'), array(SunwebGroup.buildAppSetting(parameters('signingCertificate').webAppThumbprintSettingName ,reference(variables('signingCertificateDeploy')).outputs.thumbprint.value))))]",
+              "minTlsVersion": "1.0"
+            }
+          },
+          "location": "[parameters('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', parameters('webSiteName'))]"
+          ],
+          "resources": [
+            {
+              "apiVersion": "2015-08-01",
+              "name": "logs",
+              "type": "config",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites/slots', parameters('webSiteName'), variables('webAppSlotName'))]"
+              ],
+              "properties": {
+                "httpLogs": {
+                  "azureBlobStorage": {
+                    "sasUrl": "[parameters('httpLogsSasUrl')]",
+                    "retentionInDays": 30,
+                    "enabled": true
+                  }
+                },
+                "failedRequestsTracing": {
+                  "enabled": false
+                },
+                "detailedErrorMessages": {
+                  "enabled": false
+                }
+              }
+            },
+            {
+              "condition": "[bool(variables('enableVnetIntegration'))]",
+              "name": "virtualNetwork",
+              "type": "config",
+              "apiVersion": "2018-02-01",
+              "location": "[parameters('location')]",
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites/slots', parameters('webSiteName'), variables('webAppSlotName'))]"
+              ],
+              "properties": {
+                "subnetResourceId": "[variables('subnetResourceId')]",
+                "swiftSupported": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "condition": "[greater(variables('numberOfHostnameBindings'), 0)]",
+      "apiVersion": "2016-08-01",
+      "name": "[concat(parameters('websiteName'),'/',variables('hostnameBindings')[copyIndex()])]",
+      "copy": {
+        "name": "bindingscopy",
+        "count": "[length(variables('hostnameBindings'))]",
+        "mode": "Serial"
+      },
+      "type": "Microsoft.Web/sites/hostNameBindings",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/Sites', parameters('webSiteName'))]"
+      ],
+      "properties": {
+        "siteName": "[parameters('websiteName')]",
+        "domainId": null,
+        "hostNameType": "Verified"
+      }
+    },
+    {
+      "condition": "[not(empty(parameters('signingCertificate')))]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "name": "[variables('signingCertificateDeploy')]",
+      "resourceGroup": "[parameters('planResourceGroup')]",
+      "properties": {
+        "mode": "Incremental",
+        "parameters": {
+          "certificateName": {
+            "value": "[concat(parameters('signingCertificate').keyVaultCertificateName,variables('certificateNameSuffix'))]"
+          },
+          "keyVaultId": {
+            "value": "[variables('keyVaultResourceId')]"
+          },
+          "keyVaultSecretName": {
+            "value": "[parameters('signingCertificate').keyVaultCertificateName]"
+          },
+          "serverFarmId": {
+            "value": "[resourceId(parameters('planResourceGroup'),'Microsoft.Web/serverFarms',parameters('planName'))]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          }
+        },
+        "templateLink":{
+          "uri": "https://prodsundiocdelivery.blob.core.windows.net/armtemplates/WebCertificate.Template.json"
+        }
+      }
+    },
+    {
+      "condition": "[greater(variables('numberOfHostnameBindingsWithCertificate'), 0)]",
+      "apiVersion": "2016-08-01",
+      "name": "[concat(parameters('websiteName'),'/',variables('hostnameBindingsWithCertificate')[copyIndex()].domain)]",
+      "copy": {
+        "name": "bindingswithcertcopy",
+        "count": "[length(variables('hostnameBindingsWithCertificate'))]",
+        "mode": "Serial"
+      },
+      "type": "Microsoft.Web/sites/hostNameBindings",
+      "dependsOn": [
+        "[concat(parameters('websiteName'),'-certificate-', copyIndex())]",
+        "[resourceId('Microsoft.Web/Sites', parameters('webSiteName'))]"
+      ],
+      "properties": {
+        "sslState": "SniEnabled",
+        "thumbprint": "[if(greater(variables('numberOfHostnameBindingsWithCertificate'), 0),reference(concat(parameters('websiteName'),'-certificate-', copyIndex())).outputs.thumbprint.value, '')]"
+      }
+    }
+  ]
+}

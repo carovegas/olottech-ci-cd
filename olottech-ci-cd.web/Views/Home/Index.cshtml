@@ -2,7 +2,17 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    <div>
+        <h1 class="display-4">OlotTech CI/CD Good Practices</h1>
+        <br>
+        <div class="form-group">
+            <label for="age">Please, introduce your age in the following textbox:</label>
+            <input type="number" class="form-control" id="age" aria-describedby="ageHelp" placeholder="Your age">
+            <small id="ageHelp" class="form-text text-muted">Returns whether you are an adult or not.</small>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary" onclick="isAdult()">Am I an adult?</button>
+        </div>
+        <div class="text-center result" id="result">
+        </div>
+    </div>

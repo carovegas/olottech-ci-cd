@@ -23,6 +23,8 @@ namespace olottech_ci_cd.web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            services.AddTransient<IAgeService, AgeService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

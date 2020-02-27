@@ -5,6 +5,10 @@
     <RootNamespace>olottech_ci_cd.web</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\olottech-ci-cd\olottech-ci-cd.csproj" />
+  </ItemGroup>
+
 
 
 </Project>

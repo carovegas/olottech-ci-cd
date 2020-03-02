@@ -1,4 +1,21 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿function isAdult() {
+    const fetchConfig = {
+        method: 'GET'
+    };
 
-// Write your JavaScript code.
+    const port = window.location.port !== "" ? `:${window.location.port}` : "";
+    const protocol = window.location.protocol.includes("https") ? 'https' : 'http';
+
+    let age = document.getElementById('age').value;
+
+    const url = `${protocol}://${window.location.hostname}${port}/home/${age}/isadult`;
+
+    fetch(url, fetchConfig)
+        .then(result => result.json())
+        .then(result =>
+        {
+            document
+                .getElementById('result')
+                .innerHTML = result.isAdult;
+        });
+}

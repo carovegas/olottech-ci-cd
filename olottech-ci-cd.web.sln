@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "olottech-ci-cd.web", "olott
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "olottech-ci-cd", "olottech-ci-cd\olottech-ci-cd.csproj", "{2D44A820-4DA8-404E-8877-0D8948DBC698}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "olottech-ci-cd.Tests.Unit", "olottech-ci-cd.Tests.Unit\olottech-ci-cd.Tests.Unit.csproj", "{DED8B6CA-56FB-4712-9418-B4FD7DC279A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "olottech-ci-cd.Unit.Tests", "olottech-ci-cd.Tests.Unit\olottech-ci-cd.Unit.Tests.csproj", "{DED8B6CA-56FB-4712-9418-B4FD7DC279A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

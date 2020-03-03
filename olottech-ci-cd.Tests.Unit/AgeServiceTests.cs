@@ -5,7 +5,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using Xunit;
 
-namespace olottech_ci_cd.Tests.Unit
+namespace olottech_ci_cd.Unit.Tests
 {
     public class AgeServiceTests
     {
@@ -45,26 +45,13 @@ namespace olottech_ci_cd.Tests.Unit
             }
 
             [Theory, AutoData]
-            public void WhenAgeIsBetween1And16_ThenReturnNotAdult([Range(1,16)]int value)
+            public void WhenAgeIsBetween1And16_ThenReturnNotAdult([Range(1,17)]int value)
             {
                 // Arrange
                 var sut = new AgeService();
 
                 // Act
                 var result = sut.IsAdult(value);
-
-                // Assert
-                result.IsAdult.Should().BeFalse();
-            }
-
-            [Fact]
-            public void WhenAgeIs17_ThenReturnNotAdult()
-            {
-                // Arrange
-                var sut = new AgeService();
-
-                // Act
-                var result = sut.IsAdult(17);
 
                 // Assert
                 result.IsAdult.Should().BeFalse();
@@ -84,20 +71,7 @@ namespace olottech_ci_cd.Tests.Unit
             }
 
             [Fact]
-            public void WhenAgeIs19_ThenReturnAdult()
-            {
-                // Arrange
-                var sut = new AgeService();
-
-                // Act
-                var result = sut.IsAdult(19);
-
-                // Assert
-                result.IsAdult.Should().BeTrue();
-            }
-
-            [Fact]
-            public void WhenAgeIsAbove19_ThenReturnAdult()
+            public void WhenAgeIsAbove18_ThenReturnAdult()
             {
                 // Arrange
                 var sut = new AgeService();

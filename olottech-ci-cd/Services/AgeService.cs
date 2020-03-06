@@ -14,7 +14,7 @@ namespace olottech_ci_cd
         /// </summary>
         /// <param name="age">The age.</param>
         /// <returns>
-        ///   <c>true</c> if the specified age is adult; otherwise, <c>false</c>.
+        ///   <c>true</c> if the specif ied age is adult; otherwise, <c>false</c>.
         /// </returns>
         public IsAdultResponseModel IsAdult(int age)
         {

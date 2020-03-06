@@ -45,7 +45,7 @@ namespace olottech_ci_cd.Unit.Tests
             }
 
             [Theory, AutoData]
-            public void WhenAgeIsBetween1And16_ThenReturnNotAdult([Range(1,17)]int value)
+            public void WhenAgeIsBetween1And20_ThenReturnNotAdult([Range(1,20)]int value)
             {
                 // Arrange
                 var sut = new AgeService();
@@ -58,24 +58,24 @@ namespace olottech_ci_cd.Unit.Tests
             }
 
             [Fact]
-            public void WhenAgeIs18_ThenReturnAdult()
+            public void WhenAgeIs21_ThenReturnAdult()
             {
                 // Arrange
                 var sut = new AgeService();
 
                 // Act
-                var result = sut.IsAdult(18);
+                var result = sut.IsAdult(21);
 
                 // Assert
                 result.IsAdult.Should().BeTrue();
             }
 
             [Fact]
-            public void WhenAgeIsAbove18_ThenReturnAdult()
+            public void WhenAgeIsAbove21_ThenReturnAdult()
             {
                 // Arrange
                 var sut = new AgeService();
-                var value = _fixture.Create<int>() + 19;
+                var value = _fixture.Create<int>() + 22;
 
                 // Act
                 var result = sut.IsAdult(value);

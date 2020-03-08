@@ -25,7 +25,7 @@ namespace olottech_ci_cd
 
             var result = new IsAdultResponseModel
             {
-                IsAdult = age > 21
+                IsAdult = age >= 18
             };
 
             return result;

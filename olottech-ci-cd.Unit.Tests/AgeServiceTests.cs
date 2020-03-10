@@ -47,7 +47,7 @@ namespace olottech_ci_cd.Unit.Tests
             [Fact]
             public void WhenIsAdult_ThenReturnTrue()
             {
-                // Arrange
+                // Arrange  
                 var sut = new AgeService();
                 var value = _fixture.Create<int>() + 18;
 

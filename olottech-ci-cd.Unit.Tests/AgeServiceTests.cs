@@ -32,7 +32,7 @@ namespace olottech_ci_cd.Unit.Tests
             }
 
             [Theory, AutoData]
-            public void WhenIsNotAdult_ThenReturnFalse([Range(0,17)]int value)
+            public void WhenIsNotAdult_ThenReturnFalse([Range(0,20)]int value)
             {
                 // Arrange
                 var sut = new AgeService();
@@ -49,10 +49,10 @@ namespace olottech_ci_cd.Unit.Tests
             {
                 // Arrange  
                 var sut = new AgeService();
-                var value = _fixture.Create<int>() + 18;
+                //var value = _fixture.Create<int>() + 21;
 
                 // Act
-                var result = sut.IsAdult(value);
+                var result = sut.IsAdult(21);
 
                 // Assert
                 result.IsAdult.Should().BeTrue();
